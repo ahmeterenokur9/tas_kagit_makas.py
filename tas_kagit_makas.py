@@ -1,4 +1,50 @@
 import random
+from playsound import playsound  # Ses efektleri için
+import os
+
+# --- ASCII Sanatları ---
+ASCII_SANAT = {
+    "taş": """
+    _______
+---'   ____)
+      (_____)
+      (_____)
+      (____)
+---.__(___)
+""",
+    "kağıt": """
+     _______
+---'    ____)____
+           ______)
+          _______)
+         _______)
+---.__________)
+""",
+    "makas": """
+    _______
+---'   ____)____
+          ______)
+       __________)
+      (____)
+---.__(___)
+"""
+}
+
+# --- Ses dosyası yolları ---
+SES_DOSYALARI = {
+    "win": "win.wav",
+    "lose": "lose.wav",
+    "draw": "draw.wav",
+    "move": "move.wav"
+}
+
+def ses_cal(tip):
+    dosya = SES_DOSYALARI.get(tip)
+    if dosya and os.path.exists(dosya):
+        try:
+            playsound(dosya)
+        except Exception:
+            pass  # Hata olursa sessizce geç
 
 def tas_kagit_makas_ahmet_eren_okur():
     print("Merhaba! Bu bir klasik taş kağıt makas oyunudur.")
@@ -8,6 +54,7 @@ def tas_kagit_makas_ahmet_eren_okur():
     print("Her oyun sonunda iki taraf da devam etmek isterse yeni oyun başlar.")
     print("Oyun sırasında 'exit' yazarak istediğiniz zaman çıkabilirsiniz.")
     print("İyi eğlenceler!")
+    print("\nNOT: Ses efektlerinin çalışması için win.wav, lose.wav, draw.wav ve move.wav dosyalarını bu dizine ekleyin.")
 
     secenekler = ["taş", "kağıt", "makas"]
     oyun_sayisi = 0
@@ -38,25 +85,39 @@ def tas_kagit_makas_ahmet_eren_okur():
             bilgisayar_secimi = random.choice(secenekler)
             print(f"Bilgisayar {bilgisayar_secimi} seçti.")
 
+            # --- ASCII Sanatını Göster ---
+            print("\nSiz:")
+            print(ASCII_SANAT[kullanici_secimi])
+            print("Bilgisayar:")
+            print(ASCII_SANAT[bilgisayar_secimi])
+
+            ses_cal("move")
+
             if kullanici_secimi == bilgisayar_secimi:
                 print("Berabere!")
+                ses_cal("draw")
             elif (kullanici_secimi == "taş" and bilgisayar_secimi == "makas") or \
                  (kullanici_secimi == "kağıt" and bilgisayar_secimi == "taş") or \
                  (kullanici_secimi == "makas" and bilgisayar_secimi == "kağıt"):
                 print("Bu turu siz kazandınız!")
                 kullanici_skor += 1
+                ses_cal("win")
             else:
                 print("Bu turu bilgisayar kazandı!")
                 bilgisayar_skor += 1
+                ses_cal("lose")
 
             print(f"Skor - Siz: {kullanici_skor}, Bilgisayar: {bilgisayar_skor}")
 
         if kullanici_skor > bilgisayar_skor:
             print(f"\nTebrikler! {oyun_sayisi}. oyunu siz kazandınız!")
+            ses_cal("win")
         elif bilgisayar_skor > kullanici_skor:
             print(f"\nÜzgünüm, {oyun_sayisi}. oyunu bilgisayar kazandı.")
+            ses_cal("lose")
         else:
             print(f"\n{oyun_sayisi}. oyun berabere bitti!")
+            ses_cal("draw")
 
         kullanici_devam = input("Tekrar oynamak ister misiniz? (evet/hayır/exit): ").lower()
         if kullanici_devam == 'exit':
